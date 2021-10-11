@@ -82,4 +82,4 @@ class HttpError {
 
 ## Acknowledgement
 
-This library is based on [javiercbk](https://github.com/javiercbk)'s [json2class](https://github.com/javiercbk/json_to_dart).
+This library is based on [javiercbk](https://github.com/javiercbk)'s [json_to_dart](https://github.com/javiercbk/json_to_dart).
