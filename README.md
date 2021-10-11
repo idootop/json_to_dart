@@ -1,22 +1,85 @@
-# JSON to Dart
+# JSON to Class
 
-[![Build Status](https://travis-ci.org/javiercbk/json_to_dart.svg?branch=master)](https://travis-ci.org/javiercbk/json_to_dart)
+Given a JSON string, this library will generate all the necessary Dart / Typescript classes to parse and generate JSON.
 
-Given a JSON string, this library will generate all the necessary Dart classes to parse and generate JSON.
+## Usage
 
-This library is designed to generate Flutter friendly model classes following the [flutter's doc recommendation](https://flutter.io/json/#serializing-json-manually-using-dartconvert).
-
-## Caveats
-
-- When an empty array is given, it will create a List<Null>. Such weird behaviour should warn the user that there is no data to extract.
-- Equal structures are not detected yet (Equal classes are going to be created over and over).
-- Properties named with funky names (like "!breaks", "|breaks", etc) or keyword (like "this", "break", "class", etc) will produce syntax errors.
-- Array of arrays are not supported:
-
-```json
-[[{ "isThisSupported": false }]]
+```yaml
+dependencies:
+  ...
+  json2class:
+    git:
+      url: https://github.com/idootop/json_to_dart.git
 ```
 
-```json
-[{ "thisSupported": [{ "cool": true }] }]
+```dart
+import 'package:json2class/json2class.dart';
+
+void main() async {
+  final jsonStr = '''
+    {
+      "code": 404,
+      "msg": "Not found!"
+    }
+  ''';
+  final dartCode = json2dart(className: 'HttpError', jsonStr: jsonStr);
+  final tsCode = json2ts(className: 'HttpError', jsonStr: jsonStr);
+}
 ```
+
+This will generate something like this:
+
+```dart
+class HttpError {
+  late int code;
+  late String msg;
+
+  HttpError({
+    int? code,
+    String? msg,
+  }) {
+    this.code = code ?? 0;
+    this.msg = msg ?? '';
+  }
+
+  factory HttpError.fromJson(Map<String, dynamic> json) => HttpError(
+        code: json['code'],
+        msg: json['msg'],
+      );
+
+  Map<String, dynamic> toJson() => {
+        'code': code,
+        'msg': msg,
+      };
+}
+```
+
+```typescript
+class HttpError {
+  public code: number;
+  public msg: string;
+
+  public constructor(p: { code?: number; msg?: string }) {
+    this.code = p.code ?? 0;
+    this.msg = p.msg ?? "";
+  }
+
+  public static fromJson(json = {} as any): HttpError {
+    return new HttpError({
+      code: json.code,
+      msg: json.msg,
+    });
+  }
+
+  public toJson() {
+    return {
+      code: this.code,
+      msg: this.msg,
+    };
+  }
+}
+```
+
+## Acknowledgement
+
+This library is based on [javiercbk](https://github.com/javiercbk)'s [json2class](https://github.com/javiercbk/json_to_dart).
