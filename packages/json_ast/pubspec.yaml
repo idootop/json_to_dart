@@ -1,0 +1,18 @@
+name: json_ast
+version: 1.0.5
+author: Javier Lecuona <javierlecuona@gmail.com>
+description: A library that builds the abstract syntax tree for a JSON string.
+homepage: https://github.com/javiercbk/json_ast
+environment:
+  sdk: '>=2.12.0 <3.0.0'
+
+publish_to: none
+
+dependencies:
+  grapheme_splitter: 
+    path: ../grapheme_splitter
+
+dev_dependencies:
+  test: ^1.17.10
+  path: ^1.8.0
+  pedantic: ^1.11.0
