@@ -1,6 +1,7 @@
 {
   "name": "json2class",
   "version": "1.0.0",
+  "private": true,
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -39,8 +40,8 @@
     "vite": "^2.6.4"
   },
   "lint-staged": {
-    "*.{js,ts,jsx,tsx}": "npx eslint --cache --fix",
+    "*.{ts,tsx}": "npx eslint --cache --fix",
     "*.{css,sass,scss}": "npx stylelint --cache --fix",
-    "*.{js,ts,jsx,tsx,css,sass,scss}": "npx prettier --write"
+    "*.{ts,tsx,css,sass,scss}": "npx prettier --write"
   }
 }

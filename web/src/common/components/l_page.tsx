@@ -7,5 +7,9 @@ interface LPageProps {
 }
 
 export const LPage: React.FC<Partial<LPageProps>> = (p) => {
-  return <View style={{ width: '100vw', height: '100vh' }}>{p.children}</View>;
+  return (
+    <View className="page" style={{ background: p.color }}>
+      {p.children}
+    </View>
+  );
 };
