@@ -1,4 +1,16 @@
 {
   "editor.formatOnSave": true,
+  "search.exclude": {
+    "**/.git": true,
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/tmp": true,
+    "*.lock": true
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/node_modules**": true,
+    "**/*cache": true
+  },
   "json.schemaDownload.enable": false
 }
