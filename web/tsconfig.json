@@ -15,7 +15,14 @@
     "isolatedModules": true,
     "noEmit": true,
     "suppressImplicitAnyIndexErrors": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "paths": {
+      "@/common/*": ["./src/common/*"],
+      "@/components/*": ["./src/components/*"],
+      "@/services/*": ["./src/services/*"],
+      "@/styles/*": ["./src/styles/*"],
+      "@/assets/*": ["./src/assets/*"]
+    }
   },
   "include": ["./src"]
 }

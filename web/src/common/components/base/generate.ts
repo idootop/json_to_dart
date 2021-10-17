@@ -284,6 +284,8 @@ export interface LTextStyle {
  */
 export function generateTextStyle(p: Partial<LTextStyle>): React.CSSProperties {
   const size = px(p.size ?? 32);
+  // 默认1.5倍行距
+  const lineHeight = px(1.5 * (p.size ?? 32));
   const shadow = generateTextShadow(p.shadow);
   return {
     fontSize: size,
@@ -292,7 +294,7 @@ export function generateTextStyle(p: Partial<LTextStyle>): React.CSSProperties {
     whiteSpace: 'normal',
     WebkitBoxOrient: 'vertical',
     opacity: isNotEmpty(p.opacity) ? p.opacity : 1,
-    lineHeight: isNotEmpty(p.height) ? px(p.height) : size,
+    lineHeight: isNotEmpty(p.height) ? px(p.height) : lineHeight,
     WebkitLineClamp: isNotEmpty(p.maxLines) ? p.maxLines : 'none',
     fontWeight: isNotEmpty(p.weight) ? (p.weight as any) : 'normal',
     color: isNotEmpty(p.color) ? p.color : 'black',

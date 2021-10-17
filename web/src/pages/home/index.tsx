@@ -1,6 +1,6 @@
-import test from '../../assets/favicon.svg';
-import { LColumn, LExpaned, LImage, LInput, LPage, LText, LView } from '../../common/components';
-import { log } from '../../common/services';
+import test from '@/assets/favicon.svg';
+import { LColumn, LExpaned, LImage, LInput, LPage, LText, LView } from '@/common/components';
+import { log } from '@/common/services';
 
 export const Home = () => {
   return (
