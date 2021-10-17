@@ -43,6 +43,7 @@ module.exports = {
     'import/first': 'warn',
     'import/newline-after-import': 'warn',
     'import/no-duplicates': 'warn',
+    '@typescript-eslint/explicit-member-accessibility': ['error', { accessibility: 'no-public' }],
     '@typescript-eslint/explicit-function-return-type': [
       'error',
       {
@@ -58,7 +59,7 @@ module.exports = {
     {
       files: ['*.tsx'],
       rules: {
-        '@typescript-eslint/explicit-function-return-type': off,
+        '@typescript-eslint/explicit-function-return-type': 'off',
       },
     },
   ],
