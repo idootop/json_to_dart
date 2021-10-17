@@ -1,0 +1,16 @@
+{
+  "name": "json2class",
+  "version": "1.0.0",
+  "scripts": {
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "husky": "^7.0.0",
+    "lint-staged": ">=10"
+  },
+  "lint-staged": {
+    "*.{js,ts,jsx,tsx}": "npx eslint --cache --fix",
+    "*.{css,sass,scss}": "npx stylelint --cache --fix",
+    "*.{js,ts,jsx,tsx,css,sass,scss}": "npx prettier --write"
+  }
+}
