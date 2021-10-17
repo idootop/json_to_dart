@@ -17,3 +17,10 @@ pubspec.lock
 
 # Directory created by dartdoc
 doc/api/
+
+**/node_modules
+**cache**
+dist/
+.temp/
+.DS_Store
+
