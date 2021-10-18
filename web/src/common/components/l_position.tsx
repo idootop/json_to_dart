@@ -8,7 +8,9 @@ interface LPositionProps extends LBaseComponentProps {
   right: number | string;
   bottom: number | string;
   align: LAlignTypes;
-  label: string;
+  size: number | string;
+  width: number | string;
+  height: number | string;
 }
 
 export const LPosition: React.FC<Partial<LPositionProps>> = (p) => p.children as any;

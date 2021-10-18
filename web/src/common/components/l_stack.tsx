@@ -6,6 +6,7 @@ import { isArray, isEmpty } from '../utils/is';
 import {
   checkChildren,
   generateBaseViewStyle,
+  generateSizeWidthPadding,
   generateStackPosition,
   LBaseComponentProps,
   LBaseViewProps,
@@ -36,9 +37,11 @@ export const LStack: React.FC<Partial<LStackProps>> = (p) => {
     items = [...items, ...content];
   }
   const contents: ReactNode[] = items.map((item, index) => {
-    const position = generateStackPosition((item as any).props);
+    const x = (item as any).props;
+    const position = generateStackPosition(x);
+    const size = generateSizeWidthPadding({ ...x, ...{ padding: undefined } });
     return (
-      <View key={index} style={{ ...position, position: 'absolute' }}>
+      <View key={index} style={{ ...size, ...position, position: 'absolute' }}>
         {item}
       </View>
     );
@@ -48,9 +51,9 @@ export const LStack: React.FC<Partial<LStackProps>> = (p) => {
       onClick={onClick}
       className={className}
       style={{
-        position: 'relative',
         ...baseViewStyle,
-        ...style, // 外部内联样式放在最后，优先级最高
+        ...style,
+        position: 'relative',
       }}
     >
       {contents}
