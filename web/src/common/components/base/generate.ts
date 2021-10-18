@@ -153,12 +153,24 @@ export interface LBaseViewProps {
   overflow: Property.Overflow;
   backgroundClip: Property.BackgroundClip;
   unselectable: boolean;
+  /**
+   * 是否隐藏（保持组件大小占位，不影响布局）
+   */
+  hide: boolean;
+  /**
+   * 是否隐藏（组件大小为0，影响布局）
+   */
+  offstage: boolean;
 }
 
 /**
  * 生成基础盒子样式，不包含定位（align）
  */
 export function generateBaseViewStyle(p: Partial<LBaseViewProps>): React.CSSProperties {
+  const offstage = p.offstage ?? false ? { display: 'none' } : undefined;
+  const visiable = {
+    visibility: (!(p.hide ?? false) ? 'visible' : 'hidden') as any,
+  };
   const padding = generateEdgeInsets(p.padding);
   const viewSize = generateSizeWidthPadding({
     size: p.size,
@@ -173,6 +185,8 @@ export function generateBaseViewStyle(p: Partial<LBaseViewProps>): React.CSSProp
   const gradient = generateGradient(p.gradient);
   const unselectable = generateUnselectable(p.unselectable);
   return {
+    ...offstage,
+    ...visiable,
     ...viewSize,
     ...boder,
     ...radius,
