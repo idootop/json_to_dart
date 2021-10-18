@@ -168,9 +168,12 @@ export interface LBaseViewProps {
  */
 export function generateBaseViewStyle(p: Partial<LBaseViewProps>): React.CSSProperties {
   const offstage = p.offstage ?? false ? { display: 'none' } : undefined;
-  const visiable = {
-    visibility: (!(p.hide ?? false) ? 'visible' : 'hidden') as any,
-  };
+  const visiable: any =
+    p.hide ?? false
+      ? {
+          visibility: 'hidden',
+        }
+      : undefined;
   const padding = generateEdgeInsets(p.padding);
   const viewSize = generateSizeWidthPadding({
     size: p.size,
