@@ -101,15 +101,15 @@ export interface LBaseViewProps {
    * 边框
    *
    * ```typescript
-   * boder="10 solid red" // => 全部边、10px、红色、实边框
+   * border="10 solid red" // => 全部边、10px、红色、实边框
    *
-   * boder={{
+   * border={{
    *    left: "10 dotted #fff", // => 左边、10px、白色、点边框
    *    top: "10 dashed rgba(255,255,255,60%)" // => 上边、10px、60%透明度白色、虚线边框
    * }}
    * ```
    */
-  boder: string | Partial<LSideProps>;
+  border: string | Partial<LSideProps>;
   /**
    * 阴影
    *
@@ -181,7 +181,7 @@ export function generateBaseViewStyle(p: Partial<LBaseViewProps>): React.CSSProp
     height: p.height,
     padding: padding,
   });
-  const boder = generateBoder(p.boder);
+  const border = generateBorder(p.border);
   const margin = generateEdgeInsets(p.margin);
   const radius = generateRadius(p.radius);
   const shadow = generateBoxShadow(p.shadow);
@@ -191,7 +191,7 @@ export function generateBaseViewStyle(p: Partial<LBaseViewProps>): React.CSSProp
     ...offstage,
     ...visiable,
     ...viewSize,
-    ...boder,
+    ...border,
     ...radius,
     ...shadow,
     ...gradient,
@@ -371,7 +371,7 @@ export function generateSizeWidthPadding(p: {
   }
   const [top, right, bottom, left] = padding!.split(' ');
   const sw = size === undefined ? undefined : `calc(${px(size)} - ${left} - ${right})`;
-  const sh = size === undefined ? undefined : `calc(${px(size)} - ${top} - ${bottom}`;
+  const sh = size === undefined ? undefined : `calc(${px(size)} - ${top} - ${bottom})`;
   const w = width === undefined ? undefined : `calc(${px(width)} - ${left} - ${right})`;
   const h = height === undefined ? undefined : `calc(${px(height)} - ${top} - ${bottom})`;
   return isNotEmpty(size)
@@ -560,7 +560,7 @@ export function generateAlign(align?: LAlignTypes): Partial<LAlignStyles> {
   }
 }
 
-export interface LBoderProps {
+export interface LBorderProps {
   borderTop: string;
   borderRight: string;
   borderBottom: string;
@@ -579,67 +579,67 @@ export interface LSideProps {
 export type LSideTypes = 'all' | 'left' | 'right' | 'top' | 'bottom' | 'vertical' | 'horizontal';
 
 /**
- * 生成一条边框（boder）
+ * 生成一条边框（border）
  */
-export function pickOneBoder(side: LSideTypes, boder?: string): Partial<LBoderProps> {
-  const noBoder = {};
-  if (isEmpty(boder)) return noBoder;
-  const boderProps = boder!.trim().split(' ');
-  if (boderProps.length !== 3) return noBoder;
-  const boderStr = [px(boderProps[0]), ...boderProps.slice(1)].join(' ');
+export function pickOneBorder(side: LSideTypes, border?: string): Partial<LBorderProps> {
+  const noBorder = {};
+  if (isEmpty(border)) return noBorder;
+  const borderProps = border!.trim().split(' ');
+  if (borderProps.length !== 3) return noBorder;
+  const borderStr = [px(borderProps[0]), ...borderProps.slice(1)].join(' ');
   switch (side) {
     case 'all':
       return {
-        borderTop: boderStr,
-        borderRight: boderStr,
-        borderBottom: boderStr,
-        borderLeft: boderStr,
+        borderTop: borderStr,
+        borderRight: borderStr,
+        borderBottom: borderStr,
+        borderLeft: borderStr,
       };
     case 'vertical':
       return {
-        borderTop: boderStr,
-        borderBottom: boderStr,
+        borderTop: borderStr,
+        borderBottom: borderStr,
       };
     case 'horizontal':
       return {
-        borderRight: boderStr,
-        borderLeft: boderStr,
+        borderRight: borderStr,
+        borderLeft: borderStr,
       };
     case 'top':
       return {
-        borderTop: boderStr,
+        borderTop: borderStr,
       };
     case 'bottom':
       return {
-        borderBottom: boderStr,
+        borderBottom: borderStr,
       };
     case 'left':
       return {
-        borderLeft: boderStr,
+        borderLeft: borderStr,
       };
     case 'right':
       return {
-        borderRight: boderStr,
+        borderRight: borderStr,
       };
     default:
-      return noBoder;
+      return noBorder;
   }
 }
 
 /**
- * 生成边框（boder）
+ * 生成边框（border）
  */
-export function generateBoder(boders?: string | Partial<LSideProps>): Partial<LBoderProps> {
-  const noBoder = {};
-  if (isEmpty(boders)) return noBoder;
-  if (isString(boders)) {
-    return pickOneBoder('all', boders as string);
+export function generateBorder(borders?: string | Partial<LSideProps>): Partial<LBorderProps> {
+  const noBorder = {};
+  if (isEmpty(borders)) return noBorder;
+  if (isString(borders)) {
+    return pickOneBorder('all', borders as string);
   }
-  let result: Partial<LBoderProps> = {};
+  let result: Partial<LBorderProps> = {};
   let key: keyof Partial<LSideProps>;
-  for (key in boders as Partial<LSideProps>) {
-    let boder = pickOneBoder(key, boders![key]);
-    result = { ...result, ...boder };
+  for (key in borders as Partial<LSideProps>) {
+    let border = pickOneBorder(key, borders![key]);
+    result = { ...result, ...border };
   }
   return result;
 }

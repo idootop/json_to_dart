@@ -11,6 +11,7 @@ interface LPositionProps extends LBaseComponentProps {
   size: number | string;
   width: number | string;
   height: number | string;
+  zIndex: number;
 }
 
 export const LPosition: React.FC<Partial<LPositionProps>> = (p) => p.children as any;

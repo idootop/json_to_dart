@@ -40,8 +40,9 @@ export const LStack: React.FC<Partial<LStackProps>> = (p) => {
     const x = (item as any).props;
     const position = generateStackPosition(x);
     const size = generateSizeWidthPadding({ ...x, ...{ padding: undefined } });
+    const zIndex = x?.zIndex ?? 1;
     return (
-      <View key={index} style={{ ...size, ...position, position: 'absolute' }}>
+      <View key={index} style={{ ...size, ...position, position: 'absolute', zIndex: zIndex }}>
         {item}
       </View>
     );
