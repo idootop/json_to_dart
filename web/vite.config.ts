@@ -4,6 +4,7 @@ import { defineConfig } from 'vite';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/json_to_dart/',
   resolve: {
     alias: {
       '@/common': resolve('./src/common'),
