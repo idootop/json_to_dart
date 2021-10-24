@@ -152,7 +152,7 @@ export interface LBaseViewProps {
   gradient: string | string[];
   overflow: Property.Overflow;
   backgroundClip: Property.BackgroundClip;
-  unselectable: boolean;
+  selectable: boolean;
   /**
    * 是否隐藏（保持组件大小占位，不影响布局）
    */
@@ -186,7 +186,7 @@ export function generateBaseViewStyle(p: Partial<LBaseViewProps>): React.CSSProp
   const radius = generateRadius(p.radius);
   const shadow = generateBoxShadow(p.shadow);
   const gradient = generateGradient(p.gradient);
-  const unselectable = generateUnselectable(p.unselectable);
+  const selectable = generateSelectable(p.selectable);
   return {
     ...offstage,
     ...visiable,
@@ -195,7 +195,7 @@ export function generateBaseViewStyle(p: Partial<LBaseViewProps>): React.CSSProp
     ...radius,
     ...shadow,
     ...gradient,
-    ...unselectable,
+    ...selectable,
     margin: margin,
     padding: padding,
     opacity: isNotEmpty(p.opacity) ? p.opacity : 1,
@@ -208,8 +208,8 @@ export function generateBaseViewStyle(p: Partial<LBaseViewProps>): React.CSSProp
 /**
  * 内容是否可选中
  */
-export function generateUnselectable(unselectable = true): any {
-  return unselectable
+export function generateSelectable(selectable = false): any {
+  return !selectable
     ? {
         MozUserSelect: '-moz-none',
         KhtmlUserSelect: 'none',
@@ -217,7 +217,13 @@ export function generateUnselectable(unselectable = true): any {
         OUserSelect: 'none',
         UserSelect: 'none',
       }
-    : undefined;
+    : {
+        MozUserSelect: '-moz-text',
+        KhtmlUserSelect: 'text',
+        WebkitUserSelect: 'text',
+        OUserSelect: 'text',
+        UserSelect: 'text',
+      };
 }
 
 /**
@@ -294,6 +300,8 @@ export interface LTextStyle {
    * ```
    */
   shadow: string | string[];
+  whiteSpace: Property.WhiteSpace;
+  textAlign: Property.TextAlign;
 }
 
 /**
@@ -308,7 +316,6 @@ export function generateTextStyle(p: Partial<LTextStyle>): React.CSSProperties {
     fontSize: size,
     textShadow: shadow,
     display: '-webkit-box',
-    whiteSpace: 'normal',
     WebkitBoxOrient: 'vertical',
     opacity: isNotEmpty(p.opacity) ? p.opacity : 1,
     lineHeight: isNotEmpty(p.height) ? px(p.height) : lineHeight,
@@ -319,6 +326,8 @@ export function generateTextStyle(p: Partial<LTextStyle>): React.CSSProperties {
     wordBreak: isNotEmpty(p.wordBreak) ? p.wordBreak : 'break-all',
     letterSpacing: isNotEmpty(p.letterSpacing) ? px(p.letterSpacing) : 'normal',
     wordSpacing: isNotEmpty(p.wordSpacing) ? px(p.wordSpacing) : 'normal',
+    whiteSpace: isNotEmpty(p.whiteSpace) ? p.whiteSpace : 'normal',
+    textAlign: isNotEmpty(p.textAlign) ? p.textAlign : 'start',
   };
 }
 

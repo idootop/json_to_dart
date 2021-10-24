@@ -95,6 +95,8 @@ export const LTextarea: React.FC<Partial<LTextareaProps>> = (p) => {
         ...baseViewStyle,
         ...realTextStyle,
         ...style,
+        overflow: 'hidden',
+        resize: 'none',
       }}
     />
   );

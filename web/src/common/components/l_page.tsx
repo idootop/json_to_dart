@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { OverlayStack } from '../services/overlay';
 import { View } from '.';
 
 interface LPageProps {
@@ -8,8 +9,11 @@ interface LPageProps {
 
 export const LPage: React.FC<Partial<LPageProps>> = (p) => {
   return (
-    <View className="page" style={{ background: p.color }}>
-      {p.children}
-    </View>
+    <>
+      <View className="page" style={{ background: p.color }}>
+        {p.children}
+      </View>
+      <OverlayStack />
+    </>
   );
 };

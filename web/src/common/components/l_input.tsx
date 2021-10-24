@@ -83,6 +83,8 @@ export const LInput: React.FC<Partial<LInputProps>> = (p) => {
         ...baseViewStyle,
         ...realTextStyle,
         ...style,
+        overflow: 'hidden',
+        resize: 'none',
       }}
     />
   );

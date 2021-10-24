@@ -10,9 +10,9 @@
     "lint-staged": ">=10"
   },
   "lint-staged": {
-    "*.{js,ts,jsx,tsx}": "npx eslint --cache --fix",
+    "*.{ts,tsx}": "npx eslint --cache --fix",
     "*.{css,sass,scss}": "npx stylelint --cache --fix",
-    "*.{js,ts,jsx,tsx,css,sass,scss}": "npx prettier --write"
+    "*.{ts,tsx,css,sass,scss}": "npx prettier --write"
   },
   "workspaces": [
     "web"

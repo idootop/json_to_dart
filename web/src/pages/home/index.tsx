@@ -1,118 +1,199 @@
-/* tslint:disable */
-/* eslint-disable */
 import { useState } from 'react';
+import styled from 'styled-components';
 
 import {
   LColumn,
   LExpaned,
   LInput,
   LPage,
+  LPosition,
   LRow,
   LSpace,
   LStack,
   LText,
+  LTextarea,
   LView,
 } from '@/common/components';
-import { log, readClipboard, writeClipboard } from '@/common/services';
+import { LCode } from '@/common/components/l_code';
+import { px, showToast, writeClipboard } from '@/common/services';
 import { isLightColor, VoidCallback } from '@/common/utils';
 import { colors } from '@/styles/colors';
-import { formatTS } from '@/utils/format';
+import { json2dart, json2ts } from '@/utils/format';
+
+function canStart(): boolean {
+  return state.json.trim() !== '' && state.className.trim() !== '';
+}
+
+let refresh = () => {};
+const state = {
+  json: '',
+  lastJson: '',
+  result: '',
+  className: 'ClassName',
+  format: 'dart',
+  completed: false,
+};
 
 export const Home = () => {
+  const [flag, setFlag] = useState(false);
+  refresh = () => {
+    setFlag(!flag);
+  };
   return (
-    <LStack>
-      <LPage color={colors.whiteClean}>
-        <LColumn>
+    <LPage color={colors.whiteClean}>
+      <LStack size="100%">
+        <LColumn size="100%">
           <LSpace height="10vh" />
           <LText size={64} weight="bold" color={colors.blackText}>
-            Json to Class
+            JSON to Class
           </LText>
-          <LSpace height={50} />
-          <LText color={colors.greyText}>将JSON自动解析为Class，给你超完美的空安全体验。</LText>
-          <LSpace height="10vh" />
+          <LSpace height={32} />
+          <LTitle />
+          <LSpace height="5vh" />
           <LExpaned align="center">
             <LRow mainAlign="center" height="100%">
-              <LSpace width={200} />
-              <LView radius={50} height="100%" width="60vw" color={colors.white}>
-                <LText color={colors.greyText}>
-                  将JSON自动解析为Class，给你超完美的空安全体验。
-                </LText>
-              </LView>
+              <LSpace width={260} />
+              <InputArea />
               <LSpace width={100} />
-              <RightActions width={200} />
+              <RightActions width={260} height={96} radius={24} />
             </LRow>
           </LExpaned>
           <LSpace height="10vh" />
-          <LText color={colors.blackText} weight="bold">
-            Made with ❤️ by WJG.
-          </LText>
-          <LSpace height="10vh" />
+          <LFooter />
+          <LSpace height="5vh" />
         </LColumn>
-      </LPage>
-      <BlueCicle size={460} />
+        <BlueCicle size={440} />
+      </LStack>
+    </LPage>
+  );
+};
+
+const InputArea = () => {
+  const { completed, format, result } = state;
+  let json = state.json.trim();
+  try {
+    json = json === '' ? '' : JSON.stringify(JSON.parse(json), undefined, 4);
+  } catch (_) {}
+  const code = completed ? result : json;
+  const language = completed ? (format === 'dart' ? 'dart' : 'typescript') : 'json';
+  const onChange = (s?: string) => {
+    state.json = s ?? '';
+    if (state.completed && state.lastJson !== state.json) {
+      state.completed = false;
+    }
+    refresh();
+  };
+  return (
+    <LStack radius={50} height="100%" width="60vw" padding="50" color={colors.white}>
+      <LView
+        radius={50}
+        height="100%"
+        width="60vw"
+        padding="50"
+        color={colors.white}
+        overflow="scroll"
+      >
+        <LCode
+          selectable
+          size="100%"
+          language={language}
+          textStyle={{
+            size: 24,
+          }}
+        >
+          {code}
+        </LCode>
+      </LView>
+      <LPosition align="center">
+        <LTextarea
+          hint="复制/粘贴JSON到此处"
+          hintStyle={{
+            color: colors.greyTextClean,
+          }}
+          onChange={onChange}
+          textStyle={{ size: 36, color: 'transparent', whiteSpace: 'pre' }}
+        />
+      </LPosition>
     </LStack>
   );
 };
 
 const RightActions = (p: { width?: number; height?: number; radius?: number }) => {
-  const { width = 200, height = 80, radius = 20 } = p;
-  const [selectTS, setSelectTS] = useState(false);
-  const [canStart, setCanStart] = useState(false);
-  const [completed, setCompleted] = useState(false);
-  const onTapFinish = async () => {
-    if (!canStart) {
-      await writeClipboard('test');
-      // todo 默认为ClassName
-      alert(await readClipboard());
-      console.log(
-        formatTS(`
-      /* eslint-disable @typescript-eslint/explicit-function-return-type */
-      /* eslint-disable @typescript-eslint/member-ordering */
-      
-      class HttpError {
-        public code: number;
-        public msg: string;
-      
-        public constructor(p: {
-          code?: number;
-          msg?: string;
-        }) {
-          this.code = p.code ?? 0;
-          this.msg = p.msg ?? '';
+  const { width = 260, height = 96, radius = 24 } = p;
+  const { completed, format, className } = state;
+  const json = state.json.trim();
+  const selectTS = format === 'typescript';
+  const select = (mode: string): void => {
+    state.format = mode;
+    refresh();
+    if (completed) {
+      try {
+        const result =
+          state.format === 'typescript' ? json2ts(className, json) : json2dart(className, json);
+        if (result !== undefined) {
+          showToast('转换成功', { type: 'success' });
+          state.result = result;
+          refresh();
+          return;
         }
-      
-        public static fromJson(json = {} as any): HttpError {return new HttpError({
-          code : json.code,
-          msg : json.msg,
-        });}
-      
-        public toJson() {return {
-          code: this.code,
-          msg: this.msg,
-        };}
+      } catch (e) {
+        console.log(e);
       }
-      `),
-      );
+      showToast('无效的JSON，请修改后重试！', { type: 'error' });
+    }
+  };
+  const onChangeClassName = (s?: string): void => {
+    state.className = s?.trim() ?? '';
+    refresh();
+  };
+  const onTapFinish = async () => {
+    if (!canStart()) {
+      if (json === '') {
+        showToast('JSON不能为空!', { type: 'error' });
+      }
+      if (state.className.trim() === '') {
+        showToast('ClassName不能为空!', { type: 'error' });
+      }
       return;
     }
     if (!completed) {
-      // todo
-      alert('开始转换');
-      // todo
-      alert('无效的JSON，请修改后重试！');
-      return;
+      try {
+        const result = selectTS ? json2ts(className, json) : json2dart(className, json);
+        if (result !== undefined) {
+          showToast('转换成功', { type: 'success' });
+          state.result = result;
+          state.completed = true;
+          refresh();
+          return;
+        }
+      } catch (e) {
+        console.log(e);
+      }
+      showToast('无效的JSON，请修改后重试！', { type: 'error' });
     } else {
-      // todo
-      alert('已复制到粘贴板');
+      await writeClipboard(state.result);
+      showToast('已复制到粘贴板', { type: 'success' });
     }
   };
 
   return (
     <LColumn mainSize="max" mainAlign="space-between">
-      <LView color={colors.white} width={width} height={height} radius={radius}>
-        <LText color={colors.blackText} weight="bold">
-          一键复制
-        </LText>
+      <LView color={colors.white} width={width} height={height} radius={radius} align="center">
+        <LInput
+          value={className}
+          hint="请输入..."
+          hintStyle={{
+            color: colors.greyTextClean,
+          }}
+          onChange={onChangeClassName}
+          textStyle={{
+            size: 36,
+            color: colors.blackText,
+            whiteSpace: 'pre',
+            textAlign: 'center',
+            weight: 'bold',
+          }}
+        />
       </LView>
       <LView color={colors.white} width={width} height={height} radius={radius}>
         <LRow>
@@ -121,7 +202,7 @@ const RightActions = (p: { width?: number; height?: number; radius?: number }) =
             width={width / 2}
             color={selectTS ? colors.white : colors.blueClean}
             onClick={() => {
-              setSelectTS(false);
+              select('dart');
             }}
           />
           <Button
@@ -129,7 +210,7 @@ const RightActions = (p: { width?: number; height?: number; radius?: number }) =
             width={width / 2}
             color={selectTS ? colors.redClean : colors.white}
             onClick={() => {
-              setSelectTS(true);
+              select('typescript');
             }}
           />
         </LRow>
@@ -138,7 +219,7 @@ const RightActions = (p: { width?: number; height?: number; radius?: number }) =
         width={width}
         onClick={onTapFinish}
         text={completed ? '一键复制' : '开始转换'}
-        color={canStart ? colors.white : colors.greyText}
+        color={canStart() ? colors.white : colors.greyText}
       />
     </LColumn>
   );
@@ -154,10 +235,10 @@ const Button = (p: {
   radius?: number;
 }) => {
   const {
-    width = 200,
-    height = 80,
-    radius = 20,
-    fontSize = 32,
+    width = 260,
+    height = 96,
+    radius = 24,
+    fontSize = 36,
     color = colors.white,
     text = 'Button',
     onClick,
@@ -183,3 +264,129 @@ const BlueCicle = (props: { size?: number }) => {
     />
   );
 };
+
+const LFooter = () => {
+  return (
+    <LRow mainAlign="center">
+      <LText color={colors.blackText} size={32} weight="bold">
+        Made with&nbsp;
+      </LText>
+      <Heart>❤️</Heart>
+      <LText color={colors.blackText} size={32} weight="bold">
+        &nbsp;by WJG.
+      </LText>
+    </LRow>
+  );
+};
+
+const Heart = styled.div`
+  text-align: center;
+  font-size: ${px(32)};
+  animation: heartbeat 1s infinite;
+  @keyframes heartbeat {
+    0% {
+      transform: scale(0.75);
+    }
+    20% {
+      transform: scale(1);
+    }
+    40% {
+      transform: scale(0.75);
+    }
+    60% {
+      transform: scale(1);
+    }
+    80% {
+      transform: scale(0.75);
+    }
+    100% {
+      transform: scale(0.75);
+    }
+  }
+`;
+
+const LTitle = () => {
+  return (
+    <LRow mainAlign="center">
+      <LText size={32} color={colors.greyText}>
+        将JSON自动解析为Class，给你超
+      </LText>
+      <FlipText>
+        <div>
+          <div>优雅</div>
+        </div>
+        <div>
+          <div>强大</div>
+        </div>
+        <div>
+          <div>完美</div>
+        </div>
+      </FlipText>
+      <LText size={32} color={colors.greyText}>
+        的空安全体验。
+      </LText>
+    </LRow>
+  );
+};
+
+const boxHeight = 32 * 1.5;
+
+const FlipText = styled.div`
+  font-size: ${px(32)};
+  color: ${colors.greyText};
+  height: ${px(boxHeight)};
+  overflow: hidden;
+  margin: 0 ${px(32 / 4)};
+
+  > div > div {
+    color: #fff;
+    padding: 0 ${px(32 / 4)};
+    height: ${px(boxHeight)};
+    margin-bottom: ${px(boxHeight)};
+    display: inline-block;
+  }
+
+  > div:first-child {
+    animation: show 5s linear infinite;
+  }
+
+  > div div {
+    background: #dc143c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  > div:first-child div {
+    background: #42c58a;
+  }
+  > div:last-child div {
+    background: #4ec7f3;
+  }
+
+  @keyframes show {
+    0% {
+      margin-top: -${px(3 * 2 * boxHeight)};
+    }
+    5% {
+      margin-top: -${px(2 * 2 * boxHeight)};
+    }
+    33% {
+      margin-top: -${px(2 * 2 * boxHeight)};
+    }
+    38% {
+      margin-top: -${px(2 * boxHeight)};
+    }
+    66% {
+      margin-top: -${px(2 * boxHeight)};
+    }
+    71% {
+      margin-top: 0px;
+    }
+    99.99% {
+      margin-top: 0px;
+    }
+    100% {
+      margin-top: -${px(3 * 2 * boxHeight)};
+    }
+  }
+`;
